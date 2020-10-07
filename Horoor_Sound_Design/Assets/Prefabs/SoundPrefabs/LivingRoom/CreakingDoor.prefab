@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2059800984651721394
+--- !u!1 &2833354801902392329
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,56 +8,66 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7415907290574045299}
-  - component: {fileID: 7339459408883454329}
-  - component: {fileID: 7239352526839717145}
+  - component: {fileID: 6714131851398954696}
+  - component: {fileID: 6781581325632925634}
+  - component: {fileID: 6895191346227438498}
+  - component: {fileID: 136878233}
   m_Layer: 0
-  m_Name: TV
+  m_Name: CreakingDoor
   m_TagString: SoundSource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7415907290574045299
+--- !u!4 &6714131851398954696
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059800984651721394}
+  m_GameObject: {fileID: 2833354801902392329}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -26.7, y: 2.809099, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1010431597138253403}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7339459408883454329
+--- !u!114 &6781581325632925634
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059800984651721394}
+  m_GameObject: {fileID: 2833354801902392329}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7e026a1f5dc96e43bd57485dea72f95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectAudioClip:
-  - {fileID: 8300000, guid: b8c7f0d33bc3f084495b1770395a9b73, type: 3}
-  useDelay: 0
-  minDelay: 0
-  maxDelay: 0
+  - {fileID: 8300000, guid: d755cce219c419045a4b7ad4d568f518, type: 3}
+  - {fileID: 8300000, guid: 369924445f64ddb4a9444096cc146257, type: 3}
+  - {fileID: 8300000, guid: 55cb4808b2551834c87d49cdedc428fa, type: 3}
+  - {fileID: 8300000, guid: b508f66a19b68c448bbee2f4b007656a, type: 3}
+  - {fileID: 8300000, guid: b4e7dba6006afc545839b0b5f16f9d84, type: 3}
+  - {fileID: 8300000, guid: 6eeb0e69a8c34d2478d13305509292b2, type: 3}
+  - {fileID: 8300000, guid: 1b740d81e26fb9843809f9a9ba6726f1, type: 3}
+  - {fileID: 8300000, guid: 151bdf8064759304f944322544a3a82e, type: 3}
+  - {fileID: 8300000, guid: 2e8c0f0f7fa82a3458c61fe6d0960367, type: 3}
+  - {fileID: 8300000, guid: e3d67f366a1a9ce4aa17a043ed850451, type: 3}
+  - {fileID: 8300000, guid: dd245876c0265314fb8bb452017f659a, type: 3}
+  useDelay: 1
+  minDelay: 6
+  maxDelay: 12
   clipVolume: 1
---- !u!82 &7239352526839717145
+--- !u!82 &6895191346227438498
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059800984651721394}
+  m_GameObject: {fileID: 2833354801902392329}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -147,98 +157,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &3387193063832252189
-GameObject:
+--- !u!135 &136878233
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1010431597138253403}
-  - component: {fileID: 7510516705871581507}
-  - component: {fileID: 432668355426676670}
-  - component: {fileID: 8715900301998403145}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1010431597138253403
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3387193063832252189}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
-  m_Children: []
-  m_Father: {fileID: 7415907290574045299}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7510516705871581507
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3387193063832252189}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &432668355426676670
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3387193063832252189}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8715900301998403145
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3387193063832252189}
+  m_GameObject: {fileID: 2833354801902392329}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Radius: 7
   m_Center: {x: 0, y: 0, z: 0}
