@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,22 +12,40 @@ public class GameManager : MonoBehaviour
 
     private int currenRoom = 0;
 
+    [SerializeField] private List<GameObject> inactiveAudioObjects = new List<GameObject>();
+    private List<GameObject> activeAudioObjects = new List<GameObject>();
+
+    public int currentSoundsActive = 0;
+
+    private bool enableNextSound = true;
+
     // Start is called before the first frame update
     void Start()
     {
-        playerObject.transform.position = livingRoomPos;
+        //playerObject.transform.position = livingRoomPos;
+
+        if(inactiveAudioObjects != null)
+        {
+            foreach (GameObject item in inactiveAudioObjects)
+            {
+                AudioObject audio = item.GetComponent<AudioObject>();
+                audio.ChangeAudioState(AudioState.STOP);
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (enableNextSound && inactiveAudioObjects.Count > 0)
         {
-            switchRooms();
+            int randomNumber = Random.Range(0, inactiveAudioObjects.Count);
+
+            StartCoroutine(MoveGameObjectToActivePool(randomNumber));
         }
     }
 
-    void switchRooms()
+    private void switchRooms()
     {
         if(currenRoom == 0)
         {
@@ -38,5 +57,36 @@ public class GameManager : MonoBehaviour
             playerObject.transform.position = livingRoomPos;
             currenRoom = 0;
         }
+    }
+
+    public void removeSoundSource(GameObject objectToRemove)
+    {
+        activeAudioObjects.Remove(objectToRemove);
+        currentSoundsActive--;
+    }
+
+    private IEnumerator MoveGameObjectToActivePool(int number)
+    {
+        enableNextSound = false;
+
+        activeAudioObjects.Add(inactiveAudioObjects[number]);
+
+        inactiveAudioObjects.RemoveAt(number);
+
+        activeAudioObjects.Last().GetComponent<AudioObject>().ChangeAudioState(AudioState.PLAY);
+        currentSoundsActive++;
+
+        //Formule: 50 x 0.3 bijvoorbleed. Hoe meer geluiden er aan staan, hoe meer tijd je krijgt.
+        float minTime = (50 * (float)(currentSoundsActive * 0.1f));
+        float maxTime = (100 * (float)(currentSoundsActive * 0.1f));
+
+        int cooldownTime = Random.Range((int)minTime, (int)maxTime);
+
+        Debug.Log("New sound in: " + cooldownTime + " Seconds");
+
+        Debug.Log("Added new sound");
+
+        yield return new WaitForSeconds(cooldownTime);
+        enableNextSound = true;
     }
 }

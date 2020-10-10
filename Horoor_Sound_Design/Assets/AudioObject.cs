@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum AudioState
+{
+    STOP,
+    PLAY
+}
+
 public class AudioObject : MonoBehaviour
 {
     [SerializeField] private List<AudioClip> objectAudioClip;
@@ -13,7 +19,9 @@ public class AudioObject : MonoBehaviour
     private AudioSource objectAudioPlayer;
     private bool allowAudio = true;
 
-    private void Start()
+    private bool isDisabled = true;
+
+    private void Awake()
     {
         objectAudioPlayer = GetComponent<AudioSource>();
         objectAudioPlayer.volume = clipVolume;
@@ -25,9 +33,23 @@ public class AudioObject : MonoBehaviour
         }
     }
 
+    public void ChangeAudioState(AudioState state)
+    {
+        if(state == AudioState.PLAY)
+        {
+            objectAudioPlayer.Play();
+            isDisabled = false;
+        }
+        else if (state == AudioState.STOP)
+        {
+            objectAudioPlayer.Stop();
+            isDisabled = true;
+        }
+    }
+
     private void Update()
     {
-        if (allowAudio && useDelay) StartCoroutine(PlayDelayedSound());
+        if (allowAudio && useDelay && !isDisabled) StartCoroutine(PlayDelayedSound());
     }
 
     private IEnumerator PlayDelayedSound()

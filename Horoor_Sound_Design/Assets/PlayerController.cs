@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform planet;
     [SerializeField] private Text objectsLeftText;
     [SerializeField] private GameObject blackPanel;
+    private GameManager gameManager;
 
     private int objectsTurnedOff = 0;
     private Rigidbody rbPlayer;
@@ -16,11 +17,14 @@ public class PlayerController : MonoBehaviour
 
     private GameObject objectInReach;
 
+    
+
     // Start is called before the first frame update
     void Start()
     {
         Physics.gravity = Vector3.zero;
         rbPlayer = GetComponent<Rigidbody>();
+        gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
     }
 
     void FixedUpdate()
@@ -71,6 +75,7 @@ public class PlayerController : MonoBehaviour
     {
         if (objectInReach != null)
         {
+            gameManager.removeSoundSource(objectInReach.gameObject);
             Destroy(objectInReach.gameObject);
             objectInReach = null;
             objectsTurnedOff++;
