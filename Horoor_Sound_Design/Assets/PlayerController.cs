@@ -17,8 +17,6 @@ public class PlayerController : MonoBehaviour
 
     private GameObject objectInReach;
 
-    
-
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +42,13 @@ public class PlayerController : MonoBehaviour
         {
             TogglePanel();
         }
+
+        objectsLeftText.text = "Active sounds: " + gameManager.currentSoundsActive;
+    }
+
+    public void ChangeAttachedRoom(Transform newPlanet)
+    {
+        planet = newPlanet;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -80,7 +85,7 @@ public class PlayerController : MonoBehaviour
             objectInReach = null;
             objectsTurnedOff++;
 
-            objectsLeftText.text = objectsTurnedOff + "/4";
+            objectsLeftText.text = "Active sounds: " + gameManager.currentSoundsActive;
         }
     }
 }

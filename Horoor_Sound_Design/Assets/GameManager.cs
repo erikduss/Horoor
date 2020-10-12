@@ -5,10 +5,14 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
-    private Vector3 livingRoomPos = new Vector3(-20.5f, 0, 20.5f);
-    private Vector3 kitchenPos = new Vector3(25f, 0, 25f);
+    private Vector3 livingRoomPos = new Vector3(0, 18.08f, -1.35f);
+    private Vector3 kitchenPos = new Vector3(-105.3f, 18.08f, -1.35f);
+
+    [SerializeField] private Transform livingRoomWorld;
+    [SerializeField] private Transform kitchenWorld;
 
     [SerializeField] private GameObject playerObject;
+    [SerializeField] private PlayerController playerScript;
 
     private int currenRoom = 0;
 
@@ -16,6 +20,17 @@ public class GameManager : MonoBehaviour
     private List<GameObject> activeAudioObjects = new List<GameObject>();
 
     public int currentSoundsActive = 0;
+    private int currentRangeIncrease = 0;
+
+    private int maxRange = 60;
+
+    private bool canUseComfortObject = true;
+
+    private float sanity = 100;
+
+    private int lastIncreaseNumber = 100;
+    private int newIncreaseNumber = 97;
+    private int sanitySteps = 3;
 
     private bool enableNextSound = true;
 
@@ -43,17 +58,92 @@ public class GameManager : MonoBehaviour
 
             StartCoroutine(MoveGameObjectToActivePool(randomNumber));
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            switchRooms();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E) && canUseComfortObject)
+        {
+            StartCoroutine(UseComfortObject());
+        }
+
+        if(sanity < newIncreaseNumber)
+        {
+            currentRangeIncrease++;
+            IncreaseAudioRange();
+
+            int last = newIncreaseNumber;
+
+            newIncreaseNumber = lastIncreaseNumber - sanitySteps;
+            lastIncreaseNumber = last;
+        }
+
+        if (sanity > 0)
+        {
+            sanity -= ((float)currentSoundsActive / 10000f);
+        }
+        else sanity = 0;
+        
+    }
+
+    private void IncreaseAudioRange()
+    {
+        int newRange = 30 + currentRangeIncrease;
+
+        if (newRange > 60) newRange = 60;
+
+        foreach (GameObject item in activeAudioObjects)
+        {
+            item.GetComponent<AudioSource>().maxDistance = (newRange);
+        }
+    }
+
+    private void RevertAudioRange()
+    {
+        currentRangeIncrease = 0;
+        lastIncreaseNumber = 100;
+        newIncreaseNumber = 97;
+        sanity = 100;
+
+        foreach(GameObject item in activeAudioObjects)
+        {
+            item.GetComponent<AudioSource>().mute = false;
+            item.GetComponent<AudioSource>().maxDistance = 30;
+        }
+    }
+
+    private void ShortAudioRange()
+    {
+        foreach (GameObject item in activeAudioObjects)
+        {
+            item.GetComponent<AudioSource>().mute = true;
+        }
+    }
+
+    private IEnumerator UseComfortObject()
+    {
+        canUseComfortObject = false;
+
+        ShortAudioRange();
+        yield return new WaitForSeconds(5);
+        RevertAudioRange();
+        yield return new WaitForSeconds(30);
+        canUseComfortObject = true;
     }
 
     private void switchRooms()
     {
         if(currenRoom == 0)
         {
+            playerScript.ChangeAttachedRoom(kitchenWorld);
             playerObject.transform.position = kitchenPos;
             currenRoom = 1;
         }
         else
         {
+            playerScript.ChangeAttachedRoom(livingRoomWorld);
             playerObject.transform.position = livingRoomPos;
             currenRoom = 0;
         }
@@ -81,10 +171,6 @@ public class GameManager : MonoBehaviour
         float maxTime = (100 * (float)(currentSoundsActive * 0.1f));
 
         int cooldownTime = Random.Range((int)minTime, (int)maxTime);
-
-        Debug.Log("New sound in: " + cooldownTime + " Seconds");
-
-        Debug.Log("Added new sound");
 
         yield return new WaitForSeconds(cooldownTime);
         enableNextSound = true;
