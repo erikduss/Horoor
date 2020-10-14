@@ -80,8 +80,9 @@ public class PlayerController : MonoBehaviour
     {
         if (objectInReach != null)
         {
-            gameManager.removeSoundSource(objectInReach.gameObject);
-            Destroy(objectInReach.gameObject);
+            gameManager.MoveGameobjectToInactive(objectInReach.gameObject);
+            //gameManager.removeSoundSource();
+            //Destroy(objectInReach.gameObject);
             objectInReach = null;
             objectsTurnedOff++;
 

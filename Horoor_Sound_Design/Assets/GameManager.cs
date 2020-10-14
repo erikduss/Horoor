@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private Vector3 livingRoomPos = new Vector3(0, 18.08f, -1.35f);
-    private Vector3 kitchenPos = new Vector3(-105.3f, 18.08f, -1.35f);
+    private Vector3 worldSpawnPoint = new Vector3(0, 36f, -1.35f);
+    //private Vector3 kitchenPos = new Vector3(-105.3f, 18.08f, -1.35f);
 
     [SerializeField] private Transform livingRoomWorld;
-    [SerializeField] private Transform kitchenWorld;
 
     [SerializeField] private GameObject playerObject;
     [SerializeField] private PlayerController playerScript;
@@ -29,10 +29,22 @@ public class GameManager : MonoBehaviour
     private float sanity = 100;
 
     private int lastIncreaseNumber = 100;
-    private int newIncreaseNumber = 97;
-    private int sanitySteps = 3;
+    private int newIncreaseNumber = 96;
+    private int sanitySteps = 4;
 
-    private bool enableNextSound = true;
+    private bool enableNextSound = false;
+
+    private bool getAnnoyedBySanity = true;
+    private bool isUsingComfortObject = false;
+
+    private int amountOfSanityWarnings = 0;
+
+    [SerializeField] private AudioManager audioManager;
+
+    private bool endGame = false;
+
+    private bool win = false;
+    private bool stoppingGame = false;
 
     // Start is called before the first frame update
     void Start()
@@ -47,11 +59,23 @@ public class GameManager : MonoBehaviour
                 audio.ChangeAudioState(AudioState.STOP);
             }
         }
+
+        StartCoroutine(CoreGameEvenTimers());
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (endGame)
+        {
+            if (!stoppingGame)
+            {
+                StopAllCoroutines();
+                StartCoroutine(PlayGameOver(win));
+            }
+            return;
+        }
+
         if (enableNextSound && inactiveAudioObjects.Count > 0)
         {
             int randomNumber = Random.Range(0, inactiveAudioObjects.Count);
@@ -82,10 +106,22 @@ public class GameManager : MonoBehaviour
 
         if (sanity > 0)
         {
-            sanity -= ((float)currentSoundsActive / 10000f);
+            sanity -= ((float)currentSoundsActive / 600f);
         }
-        else sanity = 0;
-        
+        else
+        {
+            sanity = 0;
+            if (getAnnoyedBySanity && !isUsingComfortObject)
+            {
+                StartCoroutine(getAnnoyedBySounds());
+            }
+        }
+
+        if(amountOfSanityWarnings >= 3)
+        {
+            endGame = true;
+            win = false;
+        }
     }
 
     private void IncreaseAudioRange()
@@ -100,11 +136,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private IEnumerator PlayGameOver(bool win)
+    {
+        stoppingGame = true;
+        int waitTime = 10;
+        int secondWaitTime = 1;
+
+        if (win)
+        {
+            ShortAudioRange();
+            audioManager.DoorbellSound();
+            waitTime = 4;
+            secondWaitTime = 15;
+        }
+        else
+        {
+            audioManager.GameOver();
+            waitTime = 7;
+        }
+        
+        yield return new WaitForSeconds(waitTime);
+        if(win) audioManager.GameComplete();
+        yield return new WaitForSeconds(secondWaitTime);
+
+        GameOver();
+    }
+
+    private IEnumerator getAnnoyedBySounds()
+    {
+        audioManager.NeedComfort();
+        getAnnoyedBySanity = false;
+        yield return new WaitForSeconds(7);
+        getAnnoyedBySanity = true;
+        amountOfSanityWarnings++;
+    }
+
+    private void GameOver()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
     private void RevertAudioRange()
     {
         currentRangeIncrease = 0;
         lastIncreaseNumber = 100;
-        newIncreaseNumber = 97;
+        newIncreaseNumber = 96;
         sanity = 100;
 
         foreach(GameObject item in activeAudioObjects)
@@ -124,18 +200,50 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator UseComfortObject()
     {
+        amountOfSanityWarnings = 0;
+        isUsingComfortObject = true;
+        audioManager.UsingComfort();
         canUseComfortObject = false;
+        getAnnoyedBySanity = false;
 
         ShortAudioRange();
         yield return new WaitForSeconds(5);
         RevertAudioRange();
-        yield return new WaitForSeconds(30);
+        yield return new WaitForSeconds(5);
+        isUsingComfortObject = false;
+        amountOfSanityWarnings = 0;
+        getAnnoyedBySanity = true;
+        yield return new WaitForSeconds(20);
         canUseComfortObject = true;
+    }
+
+    private IEnumerator CoreGameEvenTimers()
+    {
+        audioManager.PlayIntroSound();
+        yield return new WaitForSeconds(15);
+        enableNextSound = true;
+        yield return new WaitForSeconds(28);
+        audioManager.PlayStoryLine();
+        yield return new WaitForSeconds(28);
+        audioManager.PlayStoryLine();
+        yield return new WaitForSeconds(28);
+        audioManager.PlayStoryLine();
+        yield return new WaitForSeconds(28);
+        audioManager.GameHalfway();
+        yield return new WaitForSeconds(28);
+        audioManager.PlayStoryLine();
+        yield return new WaitForSeconds(28);
+        audioManager.PlayStoryLine();
+        yield return new WaitForSeconds(28);
+        audioManager.PlayStoryLine();
+        yield return new WaitForSeconds(28);
+        endGame = true;
+        win = true;
     }
 
     private void switchRooms()
     {
-        if(currenRoom == 0)
+        /*if(currenRoom == 0)
         {
             playerScript.ChangeAttachedRoom(kitchenWorld);
             playerObject.transform.position = kitchenPos;
@@ -146,18 +254,36 @@ public class GameManager : MonoBehaviour
             playerScript.ChangeAttachedRoom(livingRoomWorld);
             playerObject.transform.position = livingRoomPos;
             currenRoom = 0;
-        }
+        }*/
     }
 
-    public void removeSoundSource(GameObject objectToRemove)
+    public void MoveGameobjectToInactive(GameObject obj)
     {
-        activeAudioObjects.Remove(objectToRemove);
+        int index = activeAudioObjects.IndexOf(obj);
+
+        inactiveAudioObjects.Add(activeAudioObjects[index]);
+
+        activeAudioObjects.RemoveAt(index);
+
+        inactiveAudioObjects.Last().GetComponent<AudioObject>().ChangeAudioState(AudioState.STOP);
         currentSoundsActive--;
     }
 
     private IEnumerator MoveGameObjectToActivePool(int number)
     {
         enableNextSound = false;
+
+        string objectName = inactiveAudioObjects[number].gameObject.name;
+
+        if (objectName == "DrippingWater" || objectName == "Shower")
+        {
+            audioManager.NewWaterRunning();
+        }
+        else
+        {
+            audioManager.NewSoundTurnedOn();
+        }
+        
 
         activeAudioObjects.Add(inactiveAudioObjects[number]);
 
@@ -167,8 +293,8 @@ public class GameManager : MonoBehaviour
         currentSoundsActive++;
 
         //Formule: 50 x 0.3 bijvoorbleed. Hoe meer geluiden er aan staan, hoe meer tijd je krijgt.
-        float minTime = (50 * (float)(currentSoundsActive * 0.1f));
-        float maxTime = (100 * (float)(currentSoundsActive * 0.1f));
+        float minTime = (25 * (float)(currentSoundsActive * 0.1f));
+        float maxTime = (50 * (float)(currentSoundsActive * 0.1f));
 
         int cooldownTime = Random.Range((int)minTime, (int)maxTime);
 
